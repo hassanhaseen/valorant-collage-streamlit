@@ -8,7 +8,6 @@ os.makedirs("uploads", exist_ok=True)
 os.makedirs("outputs", exist_ok=True)
 
 st.set_page_config(page_title="Valorant Collage Generator", layout="centered")
-
 st.title("🎮 Valorant Collage Generator")
 
 # Session state flags
@@ -53,17 +52,16 @@ if uploaded_files:
 if st.session_state.output_files:
     st.subheader("📸 Generated Collages")
     for file in st.session_state.output_files:
-    filename = os.path.basename(file)
-    st.image(file, caption=filename, use_container_width=True)
-    with open(file, "rb") as img_file:
-        st.download_button(
-            label="⬇ Download",
-            data=img_file,
-            file_name=filename,
-            mime="image/jpeg",
-            key=filename
-        )
-
+        filename = os.path.basename(file)
+        st.image(file, caption=filename, use_container_width=True)
+        with open(file, "rb") as img_file:
+            st.download_button(
+                label="⬇ Download",
+                data=img_file,
+                file_name=filename,
+                mime="image/jpeg",
+                key=filename
+            )
 
     # ZIP download button at the end
     zip_path = zip_collages(st.session_state.output_files)
