@@ -3,7 +3,7 @@ import os
 import shutil
 from utils import sort_images_by_tier, generate_collages, zip_collages
 
-# Create folders
+# Setup folders
 os.makedirs("uploads", exist_ok=True)
 os.makedirs("outputs", exist_ok=True)
 
@@ -11,19 +11,30 @@ st.set_page_config(page_title="Valorant Collage Generator", layout="centered")
 
 st.title("🎮 Valorant Collage Generator")
 
-uploaded_files = st.file_uploader("Upload your VALORANT skin images (1200x1200)", type=["jpg", "jpeg", "png"], accept_multiple_files=True)
+# Session state flags
+if "collages_generated" not in st.session_state:
+    st.session_state.collages_generated = False
+    st.session_state.output_files = []
 
+# File uploader
+uploaded_files = st.file_uploader(
+    "Upload your 1200x1200 VALORANT skin images",
+    type=["jpg", "jpeg", "png"],
+    accept_multiple_files=True
+)
+
+# Handle upload + generation
 if uploaded_files:
-    st.success(f"{len(uploaded_files)} files uploaded")
+    if not st.session_state.collages_generated:
+        st.success(f"{len(uploaded_files)} files uploaded")
 
-    # Clear previous files
-    shutil.rmtree("uploads", ignore_errors=True)
-    shutil.rmtree("outputs", ignore_errors=True)
-    os.makedirs("uploads", exist_ok=True)
-    os.makedirs("outputs", exist_ok=True)
+        # Clear old folders
+        shutil.rmtree("uploads", ignore_errors=True)
+        shutil.rmtree("outputs", ignore_errors=True)
+        os.makedirs("uploads", exist_ok=True)
+        os.makedirs("outputs", exist_ok=True)
 
-    with st.spinner("Generating collages..."):
-        # Save uploaded images
+        # Save uploaded files
         image_paths = []
         for file in uploaded_files:
             path = os.path.join("uploads", file.name)
@@ -31,26 +42,39 @@ if uploaded_files:
                 f.write(file.read())
             image_paths.append(path)
 
+        # Process and sort
         sorted_images = sort_images_by_tier(image_paths)
-        output_files = generate_collages(sorted_images)
 
-st.subheader("📸 Collages Generated:")
+        with st.spinner("⚙️ Generating collages..."):
+            st.session_state.output_files = generate_collages(sorted_images)
+            st.session_state.collages_generated = True
 
-for file in output_files:
-    col1, col2 = st.columns([4, 1])
-    with col1:
-        st.image(file, caption=os.path.basename(file), use_container_width=True)
-    with col2:
-        with open(file, "rb") as img_file:
-            st.download_button(
-                label="⬇ Download",
-                data=img_file,
-                file_name=os.path.basename(file),
-                mime="image/jpeg"
-            )
+# Show collages + download buttons
+if st.session_state.output_files:
+    st.subheader("📸 Generated Collages")
+    for file in st.session_state.output_files:
+        filename = os.path.basename(file)
 
-# ZIP download for all
-zip_path = zip_collages(output_files)
-with open(zip_path, "rb") as f:
-    st.download_button("⬇ Download All Collages (ZIP)", f, file_name="collages.zip", mime="application/zip")
+        # Two columns: image and download button
+        col1, col2 = st.columns([4, 1])
+        with col1:
+            st.image(file, caption=filename, use_container_width=True)
+        with col2:
+            with open(file, "rb") as img_file:
+                st.download_button(
+                    label="⬇ Download",
+                    data=img_file,
+                    file_name=filename,
+                    mime="image/jpeg",
+                    key=filename  # prevents re-render issues
+                )
 
+    # ZIP download button at the end
+    zip_path = zip_collages(st.session_state.output_files)
+    with open(zip_path, "rb") as zip_file:
+        st.download_button(
+            label="⬇ Download All Collages (ZIP)",
+            data=zip_file,
+            file_name="valorant_collages.zip",
+            mime="application/zip"
+        )
