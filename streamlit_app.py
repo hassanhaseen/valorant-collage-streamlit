@@ -36,7 +36,8 @@ if uploaded_files:
 
     st.subheader("📸 Collages Generated:")
     for file in output_files:
-        st.image(file, caption=os.path.basename(file), use_column_width=True)
+        st.image(file, caption=os.path.basename(file), use_container_width=True)
+
 
     # ZIP download
     zip_path = zip_collages(output_files)
