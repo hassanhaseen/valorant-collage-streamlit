@@ -34,12 +34,23 @@ if uploaded_files:
         sorted_images = sort_images_by_tier(image_paths)
         output_files = generate_collages(sorted_images)
 
-    st.subheader("📸 Collages Generated:")
-    for file in output_files:
+st.subheader("📸 Collages Generated:")
+
+for file in output_files:
+    col1, col2 = st.columns([4, 1])
+    with col1:
         st.image(file, caption=os.path.basename(file), use_container_width=True)
+    with col2:
+        with open(file, "rb") as img_file:
+            st.download_button(
+                label="⬇ Download",
+                data=img_file,
+                file_name=os.path.basename(file),
+                mime="image/jpeg"
+            )
 
+# ZIP download for all
+zip_path = zip_collages(output_files)
+with open(zip_path, "rb") as f:
+    st.download_button("⬇ Download All Collages (ZIP)", f, file_name="collages.zip", mime="application/zip")
 
-    # ZIP download
-    zip_path = zip_collages(output_files)
-    with open(zip_path, "rb") as f:
-        st.download_button("⬇ Download All Collages (ZIP)", f, file_name="collages.zip", mime="application/zip")
