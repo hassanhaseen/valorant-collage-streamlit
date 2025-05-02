@@ -53,21 +53,17 @@ if uploaded_files:
 if st.session_state.output_files:
     st.subheader("📸 Generated Collages")
     for file in st.session_state.output_files:
-        filename = os.path.basename(file)
+    filename = os.path.basename(file)
+    st.image(file, caption=filename, use_container_width=True)
+    with open(file, "rb") as img_file:
+        st.download_button(
+            label="⬇ Download",
+            data=img_file,
+            file_name=filename,
+            mime="image/jpeg",
+            key=filename
+        )
 
-        # Two columns: image and download button
-        col1, col2 = st.columns([4, 1])
-        with col1:
-            st.image(file, caption=filename, use_container_width=True)
-        with col2:
-            with open(file, "rb") as img_file:
-                st.download_button(
-                    label="⬇ Download",
-                    data=img_file,
-                    file_name=filename,
-                    mime="image/jpeg",
-                    key=filename  # prevents re-render issues
-                )
 
     # ZIP download button at the end
     zip_path = zip_collages(st.session_state.output_files)
