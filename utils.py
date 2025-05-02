@@ -11,7 +11,13 @@ def extract_tier(filename):
     return TIER_ORDER.index(prefix) if prefix in TIER_ORDER else len(TIER_ORDER)
 
 def sort_images_by_tier(paths):
-    return [x[0] for x in sorted([(p, extract_tier(p)) for p in paths], key=lambda x: x[1])]
+    def get_tier_rank(path):
+        filename = os.path.basename(path).lower()
+        prefix = filename.split('_')[0]
+        return TIER_ORDER.index(prefix) if prefix in TIER_ORDER else len(TIER_ORDER)
+
+    return sorted(paths, key=get_tier_rank)
+
 
 def choose_optimal_grid(total_images):
     for grid_size in sorted(COLLAGE_GRIDS.keys()):
