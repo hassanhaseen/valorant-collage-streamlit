@@ -1,6 +1,7 @@
 import streamlit as st
 import os
 import shutil
+import base64
 from utils import sort_images_by_tier, generate_collages, zip_collages
 
 # Setup folders
@@ -48,22 +49,37 @@ if uploaded_files:
             st.session_state.output_files = generate_collages(sorted_images)
             st.session_state.collages_generated = True
 
-# Show collages + download buttons
+# Show collages + center-styled download buttons
 if st.session_state.output_files:
     st.subheader("📸 Generated Collages")
+
     for file in st.session_state.output_files:
         filename = os.path.basename(file)
         st.image(file, caption=filename, use_container_width=True)
-        with open(file, "rb") as img_file:
-            st.download_button(
-                label="⬇ Download",
-                data=img_file,
-                file_name=filename,
-                mime="image/jpeg",
-                key=filename
-            )
 
-    # ZIP download button at the end
+        with open(file, "rb") as img_file:
+            b64 = base64.b64encode(img_file.read()).decode()
+            href = f'''
+            <div style="text-align:center; margin-top: 10px;">
+                <a href="data:file/jpg;base64,{b64}" download="{filename}">
+                    <button style="
+                        background-color:#ff4655;
+                        border:none;
+                        color:white;
+                        padding:10px 24px;
+                        text-align:center;
+                        font-size:14px;
+                        border-radius:5px;
+                        cursor:pointer;
+                        transition:0.3s;">
+                        ⬇ Download
+                    </button>
+                </a>
+            </div>
+            '''
+            st.markdown(href, unsafe_allow_html=True)
+
+    # ZIP download button at the bottom (Streamlit native)
     zip_path = zip_collages(st.session_state.output_files)
     with open(zip_path, "rb") as zip_file:
         st.download_button(
