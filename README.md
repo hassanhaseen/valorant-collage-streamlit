@@ -35,11 +35,11 @@ Sorts skins by rarity tier (Exclusive → Ultra → Premium → Deluxe → Selec
 ## 🧠 How It Works
 
 > Skin filenames must start with their tier as prefix:
-exclusive_reaver_vandal.jpg
-premium_gaia_guardian.jpg
-ultra_protocol_spectre.png
+- exclusive_reaver_vandal.jpg
+- premium_gaia_guardian.jpg
+- ultra_protocol_spectre.png
 > Tier priority:
-Exclusive → Ultra → Premium → Deluxe → Select → Unknown
+- Exclusive → Ultra → Premium → Deluxe → Select → Unknown
 
 
 > Collages:
