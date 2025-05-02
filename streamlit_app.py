@@ -11,7 +11,7 @@ os.makedirs("outputs", exist_ok=True)
 # Page config
 st.set_page_config(page_title="Valorant Collage Generator", layout="wide")
 
-# Center-align header using Markdown + CSS
+# Title + description (centered)
 st.markdown("""
     <h1 style='text-align: center;'>🎮 Valorant Collage Generator</h1>
     <p style='text-align: center; font-size: 16px; color: #aaa;'>
@@ -20,13 +20,13 @@ st.markdown("""
     </p>
 """, unsafe_allow_html=True)
 
-# Session state init
+# Session state
 if "collages_generated" not in st.session_state:
     st.session_state.collages_generated = False
 if "output_files" not in st.session_state:
     st.session_state.output_files = []
 
-# Upload section (centered using columns)
+# Upload box (centered)
 upload_col = st.columns([1, 2, 1])[1]
 with upload_col:
     uploaded = st.file_uploader(
@@ -36,23 +36,21 @@ with upload_col:
         key="new_upload_key"
     )
 
-# Generate button centered
-button_col = st.columns([1, 2, 1])[1]
-with button_col:
+# 🚀 Generate button (centered)
+btn_col = st.columns([1, 2, 1])[1]
+with btn_col:
     generate = st.button("🚀 Generate Collages")
 
-# Generate collages
+# Generate logic
 if generate and uploaded:
     st.session_state.collages_generated = False
     st.session_state.output_files = []
 
-    # Clear folders
     shutil.rmtree("uploads", ignore_errors=True)
     shutil.rmtree("outputs", ignore_errors=True)
     os.makedirs("uploads", exist_ok=True)
     os.makedirs("outputs", exist_ok=True)
 
-    # Save uploads
     image_paths = []
     for file in uploaded:
         path = os.path.join("uploads", file.name)
@@ -60,17 +58,16 @@ if generate and uploaded:
             f.write(file.read())
         image_paths.append(path)
 
-    # Sort + generate
     sorted_images = sort_images_by_tier(image_paths)
     with st.spinner("⚙️ Generating collages..."):
         st.session_state.output_files = generate_collages(sorted_images)
         st.session_state.collages_generated = True
 
-# Display collages
+# 📸 Header (centered)
 if st.session_state.collages_generated and st.session_state.output_files:
-    st.markdown("## 📸 Generated Collages")
-    cols = st.columns(5)
+    st.markdown("<h2 style='text-align: center;'>📸 Generated Collages</h2>", unsafe_allow_html=True)
 
+    cols = st.columns(5)
     for i, file in enumerate(st.session_state.output_files):
         with cols[i]:
             filename = os.path.basename(file)
@@ -98,7 +95,7 @@ if st.session_state.collages_generated and st.session_state.output_files:
                 '''
                 st.markdown(download_html, unsafe_allow_html=True)
 
-    # ZIP button centered below all collages
+    # ZIP Download Button (centered)
     zip_path = zip_collages(st.session_state.output_files)
     zip_col = st.columns([1, 2, 1])[1]
     with zip_col:
