@@ -8,41 +8,37 @@ from utils import sort_images_by_tier, generate_collages, zip_collages
 os.makedirs("uploads", exist_ok=True)
 os.makedirs("outputs", exist_ok=True)
 
-# Set page title and layout
 st.set_page_config(page_title="Valorant Collage Generator", layout="wide")
 st.title("🎮 Valorant Collage Generator")
 
-# Session state
-if "collages_generated" not in st.session_state:
-    st.session_state.collages_generated = False
-    st.session_state.output_files = []
-if "uploaded_files" not in st.session_state:
-    st.session_state.uploaded_files = None
-
-# Upload section
+# Upload section (no session key assignments)
 uploaded = st.file_uploader(
     "Upload your 1200x1200 VALORANT skin images",
     type=["jpg", "jpeg", "png"],
-    accept_multiple_files=True,
-    key="uploaded_files"
+    accept_multiple_files=True
 )
 
-# Generate button
+# Generate button (will trigger collage generation)
 generate = st.button("🚀 Generate Collages")
 
-# Handle collage generation
+# Session state init
+if "collages_generated" not in st.session_state:
+    st.session_state.collages_generated = False
+if "output_files" not in st.session_state:
+    st.session_state.output_files = []
+
+# Collage generation logic
 if generate and uploaded:
-    # Reset session
     st.session_state.collages_generated = False
     st.session_state.output_files = []
 
-    # Cleanup
+    # Cleanup folders
     shutil.rmtree("uploads", ignore_errors=True)
     shutil.rmtree("outputs", ignore_errors=True)
     os.makedirs("uploads", exist_ok=True)
     os.makedirs("outputs", exist_ok=True)
 
-    # Save images
+    # Save uploaded files
     image_paths = []
     for file in uploaded:
         path = os.path.join("uploads", file.name)
@@ -52,12 +48,11 @@ if generate and uploaded:
 
     # Sort and generate
     sorted_images = sort_images_by_tier(image_paths)
-
     with st.spinner("⚙️ Generating collages..."):
         st.session_state.output_files = generate_collages(sorted_images)
         st.session_state.collages_generated = True
 
-# Show generated collages (horizontal layout)
+# Display section (after generation)
 if st.session_state.collages_generated and st.session_state.output_files:
     st.markdown("## 📸 Generated Collages")
     cols = st.columns(5)
@@ -69,7 +64,7 @@ if st.session_state.collages_generated and st.session_state.output_files:
 
             with open(file, "rb") as img_file:
                 b64 = base64.b64encode(img_file.read()).decode()
-                button_html = f'''
+                download_html = f'''
                 <div style="text-align:center; margin-top:10px;">
                     <a href="data:file/jpg;base64,{b64}" download="{filename}">
                         <button style="
@@ -88,9 +83,9 @@ if st.session_state.collages_generated and st.session_state.output_files:
                     </a>
                 </div>
                 '''
-                st.markdown(button_html, unsafe_allow_html=True)
+                st.markdown(download_html, unsafe_allow_html=True)
 
-    # ZIP download button
+    # ZIP download
     zip_path = zip_collages(st.session_state.output_files)
     with open(zip_path, "rb") as zip_file:
         st.markdown("###")
