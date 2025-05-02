@@ -1,6 +1,6 @@
 # 🎮 Valorant Collage Generator
 
-<img src="https://cdn.vectorstock.com/i/1000v/37/87/valorant-game-logo-icon-eps-10-gaming-streamer-vector-33193787.jpg" alt="Valorant Logo" width=120 align="right" />
+<img src="https://static-00.iconduck.com/assets.00/games-valorant-icon-2048x2048-68la6c9i.png" alt="Valorant Logo" width=120 align="right" />
 
 A sleek web app that auto-generates **5 optimized collage images** from uploaded Valorant skin screenshots.  
 Sorts skins by rarity tier (Exclusive → Ultra → Premium → Deluxe → Select → Unknown) and presents them in beautiful, shareable image grids — perfect for marketplaces that allow only 5 images.
