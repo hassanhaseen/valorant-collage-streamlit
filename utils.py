@@ -4,7 +4,7 @@ from PIL import Image
 import zipfile
 
 TIER_ORDER = ["exclusive", "ultra", "premium", "deluxe", "select", "unknown"]
-COLLAGE_GRIDS = {2: 4, 3: 9, 4: 16, 5: 25, 6: 36, 7: 49, 8: 64, 9: 81}
+COLLAGE_GRIDS = {2: 4, 3: 9, 4: 16, 5: 25, 6: 36, 7: 49}
 
 def extract_tier(filename):
     prefix = filename.split('_')[0].lower()
