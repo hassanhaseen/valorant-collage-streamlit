@@ -52,20 +52,11 @@ if generate and uploaded:
     os.makedirs("outputs", exist_ok=True)
 
     image_paths = []
-    total = len(uploaded)
-    progress = st.progress(0, text="Saving uploaded images...")
-
-    for idx, file in enumerate(uploaded):
-        filename = file.name
-        path = os.path.join("uploads", filename)
+    for file in uploaded:
+        path = os.path.join("uploads", file.name)
         with open(path, "wb") as f:
             f.write(file.read())
         image_paths.append(path)
-
-        progress.progress((idx + 1) / total, text=f"Uploaded {idx + 1} of {total}: {filename}")
-
-    progress.empty()  # clear when done
-
 
 # 📸 Header (centered)
 if st.session_state.collages_generated and st.session_state.output_files:
