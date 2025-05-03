@@ -57,6 +57,9 @@ if generate and uploaded:
         with open(path, "wb") as f:
             f.write(file.read())
         image_paths.append(path)
+    sorted_images = sort_images_by_tier(image_paths)
+    st.session_state.output_files = generate_collages(sorted_images)
+    st.session_state.collages_generated = True
 
 # 📸 Header (centered)
 if st.session_state.collages_generated and st.session_state.output_files:
